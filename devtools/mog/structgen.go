@@ -40,7 +40,7 @@ var (
 	}
 )
 
-func main() {
+func mainV1() {
 	protoStructs, eventStructs, err := findProtoGeneratedStructs()
 	if err != nil {
 		log.Fatalf("failed to find proto generated structs: %s", err)
