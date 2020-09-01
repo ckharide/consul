@@ -66,8 +66,3 @@ func targetPackages(cfgs []structConfig) []string {
 	}
 	return result
 }
-
-func generate(cfgs []structConfig, targets map[string]targetPkg) error {
-	// TODO
-	return nil
-}

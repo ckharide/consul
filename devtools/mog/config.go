@@ -22,6 +22,10 @@ type target struct {
 	Struct  string
 }
 
+func (t target) String() string {
+	return t.Package + "." + t.Struct
+}
+
 func newTarget(v string) target {
 	i := strings.LastIndex(v, ".")
 	if i == -1 {
