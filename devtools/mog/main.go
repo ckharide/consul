@@ -52,15 +52,22 @@ func runMog(opts options) error {
 	if err != nil {
 		return fmt.Errorf("failed to load targets: %w", err)
 	}
-	_ = targets
 
-	// TODO: generate conversion functions and tests
-	// TODO: write files
-
-	return nil
+	return generate(cfgs, targets)
 }
 
 func targetPackages(cfgs []structConfig) []string {
-	// TODO:
+	result := make([]string, 0, len(cfgs))
+	for _, cfg := range cfgs {
+		if cfg.Target.Package == "" {
+			continue
+		}
+		result = append(result, cfg.Target.Package)
+	}
+	return result
+}
+
+func generate(cfgs []structConfig, targets map[string]targetPkg) error {
+	// TODO
 	return nil
 }

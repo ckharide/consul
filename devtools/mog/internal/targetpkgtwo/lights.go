@@ -1,12 +1,9 @@
 package targetpkgtwo
 
 type Lamp struct {
-	//Sockets int
-	//Height  int
+	Brand   string
+	Sockets uint8
 }
 
 type Flood struct {
-	//Lumen  int
-	//Width  int
-	//Height int
 }

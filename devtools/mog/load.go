@@ -193,7 +193,7 @@ func loadTargetStructs(names []string) (map[string]targetPkg, error) {
 
 			var fields []*types.Var
 			for i := 0; i < strct.NumFields(); i++ {
-				f := strct.Field(0)
+				f := strct.Field(i)
 				if f.Exported() {
 					fields = append(fields, f)
 				}
