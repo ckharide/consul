@@ -3,23 +3,26 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"strings"
 )
 
 type structConfig struct {
-	Target       string
-	Output       string
-	Name         string
-	IgnoreFields []string
-	FuncFrom     string
-	FuncTo       string
-	Fields       []fieldConfig
+	Source           string
+	Target           string // TODO: split package/struct name
+	Output           string
+	FuncNameFragment string
+	IgnoreFields     []string
+	FuncFrom         string
+	FuncTo           string
+	Fields           []fieldConfig
 }
 
 type fieldConfig struct {
-	Name string
-	// TODO: Pointer pointerSettings
+	Source   *ast.Field
+	Name     string
 	FuncFrom string
 	FuncTo   string
+	// TODO: Pointer pointerSettings
 }
 
 func configsFromAnnotations(sources pkg) ([]structConfig, error) {
@@ -27,7 +30,7 @@ func configsFromAnnotations(sources pkg) ([]structConfig, error) {
 	cfgs := make([]structConfig, 0, len(names))
 	for _, name := range names {
 		strct := sources.structs[name]
-		cfg, err := parseStructAnnotation(strct)
+		cfg, err := parseStructAnnotation(name, strct.Doc)
 		if err != nil {
 			return nil, fmt.Errorf("from source %v: %w", name, err)
 		}
@@ -42,6 +45,7 @@ func configsFromAnnotations(sources pkg) ([]structConfig, error) {
 
 		cfgs = append(cfgs, cfg)
 	}
+	// TODO: validate config - required values
 	return cfgs, nil
 }
 
@@ -52,8 +56,41 @@ func fieldNameFromAST(names []*ast.Ident) string {
 	return names[0].Name
 }
 
-func parseStructAnnotation(decl structDecl) (structConfig, error) {
-	var c structConfig
+func parseStructAnnotation(name string, doc []*ast.Comment) (structConfig, error) {
+	c := structConfig{Source: name}
+
+	i := structAnnotationIndex(doc)
+	if i < 0 {
+		return c, fmt.Errorf("missing struct annotation")
+	}
+
+	buf := new(strings.Builder)
+	for _, line := range doc[i+1:] {
+		buf.WriteString(strings.TrimLeft(line.Text, "/"))
+	}
+	for _, part := range strings.Fields(buf.String()) {
+		kv := strings.Split(part, "=")
+		if len(kv) != 2 {
+			return c, fmt.Errorf("invalid term '%v' in annotation, expected only one =", part)
+		}
+		value := kv[1]
+		switch kv[0] {
+		case "target":
+			c.Target = value
+		case "output":
+			c.Output = value
+		case "name":
+			c.FuncNameFragment = value
+		case "ignore-fields":
+			c.IgnoreFields = strings.Split(value, ",")
+		case "func-from":
+			c.FuncFrom = value
+		case "func-to":
+			c.FuncTo = value
+		default:
+			return c, fmt.Errorf("invalid annotation key %v in term '%v'", kv[0], part)
+		}
+	}
 
 	return c, nil
 }

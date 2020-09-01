@@ -48,7 +48,6 @@ func runMog(opts options) error {
 		return fmt.Errorf("failed to parse annotations: %w", err)
 	}
 
-	// TODO: compile the list of target packages from the annotations
 	// TODO: load target structs
 	// TODO: generate conversion functions and tests
 	// TODO: write files
