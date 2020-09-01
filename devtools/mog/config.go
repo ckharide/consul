@@ -26,7 +26,7 @@ type fieldConfig struct {
 	// TODO: Pointer pointerSettings
 }
 
-func configsFromAnnotations(sources pkg) ([]structConfig, error) {
+func configsFromAnnotations(sources sourcePkg) ([]structConfig, error) {
 	names := sources.Names()
 	cfgs := make([]structConfig, 0, len(names))
 	for _, name := range names {

@@ -38,19 +38,29 @@ func setupFlags(name string) (*flag.FlagSet, *options) {
 }
 
 func runMog(opts options) error {
-	sources, err := loadStructs(opts.source, sourceStructs)
+	sources, err := loadSourceStructs(opts.source)
 	if err != nil {
 		return fmt.Errorf("failed to load source from %s: %w", opts.source, err)
 	}
 
-	_, err = configsFromAnnotations(sources)
+	cfgs, err := configsFromAnnotations(sources)
 	if err != nil {
 		return fmt.Errorf("failed to parse annotations: %w", err)
 	}
 
-	// TODO: load target structs
+	targets, err := loadTargetStructs(targetPackages(cfgs))
+	if err != nil {
+		return fmt.Errorf("failed to load targets: %w", err)
+	}
+	_ = targets
+
 	// TODO: generate conversion functions and tests
 	// TODO: write files
 
+	return nil
+}
+
+func targetPackages(cfgs []structConfig) []string {
+	// TODO:
 	return nil
 }
