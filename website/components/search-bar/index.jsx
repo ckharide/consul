@@ -13,7 +13,7 @@ export default function SearchBar() {
           </span>
         </>
       )}
-      placeholder="Search Vault documentation"
+      placeholder="Search Consul documentation"
     />
   )
 }
